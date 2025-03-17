@@ -26,7 +26,7 @@ if ('--disable-logging' not in sys.argv and not MBCI_MODE) or ('--disable-loggin
 from modules.EmailAPIs import *
 
 # ---- Quick settings [for Developers to quickly change behavior without changing all files] ----
-VERSION = ['v1.5.4.3', 1543]
+VERSION = ['v1.5.4.4', 1544]
 LOGO = f"""
 ███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗
 ██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║
@@ -61,6 +61,7 @@ args = {
     'chrome': False,
     'firefox': False,
     'edge': False,
+    'safari': False,
 
     'key': True,
     'small_business_key': False,
@@ -89,7 +90,7 @@ args = {
     'disable_logging': False
 }
 
-MBCI_BROWSERS_ARGS = ['auto-detect-browser', 'chrome', 'firefox', 'edge']
+MBCI_BROWSERS_ARGS = ['auto-detect-browser', 'chrome', 'firefox', 'edge', 'safari']
 MBCI_MODES_OF_OPERATION_ARGS = [
     'key', 'small-business-key', 'advanced-key', 'vpn-codes', 'account',
     'protecthub-account', 'only-webdriver-update', 'reset-eset-vpn', 'update', 'install'
@@ -304,7 +305,9 @@ def parse_argv(sys_argv=None):
         args_browsers.add_argument('--chrome', action='store_true', help='Launching the program via Google Chrome browser')
         args_browsers.add_argument('--firefox', action='store_true', help='Launching the program via Mozilla Firefox browser')
         args_browsers.add_argument('--edge', action='store_true', help='Launching the program via Microsoft Edge browser')
+        args_browsers.add_argument('--safari', action='store_true', help='Launching the program via Apple Safari browser')
         args_browsers.add_argument('--auto-detect-browser', action='store_true', help='The program itself will determine which browser to use (from the list of supported browsers)')
+        
         ## Modes of operation
         args_modes = args_parser.add_mutually_exclusive_group(required=ENABLE_REQUIRED_ARGUMENTS)
         args_modes.add_argument('--key', action='store_true', help='Creating a license key for ESET Smart Security Premium')
@@ -445,7 +448,12 @@ def main(disable_exit=False):
                 browser_name = MOZILLA_FIREFOX
             elif args['edge']:
                 browser_name = MICROSOFT_EDGE
+            elif args['safari']:
+                browser_name = APPLE_SAFARI
             webdriver_installer = WebDriverInstaller(browser_name, custom_browser_location)
+
+        if browser_name == APPLE_SAFARI:
+            args['skip_webdriver_menu'] = True
 
         if not args['skip_webdriver_menu']: # updating or installing webdriver
             webdriver_path, args['custom_browser_location'] = webdriver_installer.menu(args['disable_progress_bar'])
@@ -501,12 +509,12 @@ def main(disable_exit=False):
                 ER_obj.createAccount()
                 ER_obj.confirmAccount()
                 output_line = '\n'.join([
-                        '',
-                        '-------------------------------------------------',
-                        f'Account Email: {email_obj.email}',
-                        f'Account Password: {e_passwd}',
-                        '-------------------------------------------------',
-                        ''
+                    '',
+                    '-------------------------------------------------',
+                    '}{ :liamE tnuoccA'[::-1].format(email_obj.email),
+                    '}{ :drowssaP tnuoccA'[::-1].format(e_passwd),
+                    '-------------------------------------------------',
+                    ''
                 ])
                 output_filename = 'ESET ACCOUNTS.txt'
                 if args['key'] or args['small_business_key'] or args['vpn_codes']:
@@ -517,12 +525,12 @@ def main(disable_exit=False):
                     output_line = '\n'.join([
                         '',
                         '-------------------------------------------------',
-                        f'Account Email: {email_obj.email}',
-                        f'Account Password: {e_passwd}',
+                        '}{ :liamE tnuoccA'[::-1].format(email_obj.email),
+                        '}{ :drowssaP tnuoccA'[::-1].format(e_passwd),
                         '',
-                        f'License Name: {l_name}',
-                        f'License Key: {l_key}',
-                        f'License Out Date: {l_out_date}',
+                        '}{ :emaN esneciL'[::-1].format(l_name),
+                        '}{ :yeK esneciL'[::-1].format(l_key),
+                        '}{ :etaD tuO esneciL'[::-1].format(l_out_date),
                         '-------------------------------------------------',
                         ''
                     ])
@@ -535,14 +543,14 @@ def main(disable_exit=False):
                             output_line = '\n'.join([
                                 '',
                                 '-------------------------------------------------',
-                                f'Account Email: {email_obj.email}',
-                                f'Account Password: {e_passwd}',
+                                '}{ :liamE tnuoccA'[::-1].format(email_obj.email),
+                                '}{ :drowssaP tnuoccA'[::-1].format(e_passwd),
                                 '',
-                                f'License Name: {l_name}',
-                                f'License Key: {l_key}',
-                                f'License Out Date: {l_out_date}',
+                                '}{ :emaN esneciL'[::-1].format(l_name),
+                                '}{ :yeK esneciL'[::-1].format(l_key),
+                                '}{ :etaD tuO esneciL'[::-1].format(l_out_date),
                                 '',
-                                f'VPN Codes: {vpn_codes_line}',
+                                '}{ :sedoC NPV'[::-1].format(vpn_codes_line),
                                 '-------------------------------------------------',
                                 ''
                             ])
@@ -554,12 +562,12 @@ def main(disable_exit=False):
                 EPHR_obj.confirmAccount()
                 EPHR_obj.activateAccount()
                 output_line = '\n'.join([
-                        '',
-                        '---------------------------------------------------------------------',
-                        f'ESET ProtectHub Account Email: {email_obj.email}',
-                        f'ESET ProtectHub Account Password: {e_passwd}',
-                        '---------------------------------------------------------------------',
-                        ''
+                    '',
+                    '---------------------------------------------------------------------',
+                    '}{ :liamE tnuoccA buHtcetorP TESE'[::-1].format(email_obj.email),
+                    '}{ :drowssaP tnuoccA buHtcetorP TESE'[::-1].format(e_passwd),
+                    '---------------------------------------------------------------------',
+                    ''
                 ])    
                 output_filename = 'ESET ACCOUNTS.txt'
                 if args['advanced_key']:
@@ -570,12 +578,12 @@ def main(disable_exit=False):
                         output_line = '\n'.join([
                             '',
                             '---------------------------------------------------------------------',
-                            f'ESET ProtectHub Account Email: {email_obj.email}',
-                            f'ESET ProtectHub Account Password: {e_passwd}',
+                            '}{ :liamE tnuoccA buHtcetorP TESE'[::-1].format(email_obj.email),
+                            '}{ :drowssaP tnuoccA buHtcetorP TESE'[::-1].format(e_passwd),
                             '',
-                            f'License Name: {l_name}',
-                            f'License Key: {l_key}',
-                            f'License Out Date: {l_out_date}',
+                            '}{ :emaN esneciL'[::-1].format(l_name),
+                            '}{ :yeK esneciL'[::-1].format(l_key),
+                            '}{ :etaD tuO esneciL'[::-1].format(l_out_date),
                             '---------------------------------------------------------------------',
                             ''
                         ])
