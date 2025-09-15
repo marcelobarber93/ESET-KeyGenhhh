@@ -1,8 +1,6 @@
 name: Account and Key Generator
 
 on:
- # schedule: #if need schedule 
- #   - cron: "0 */2 * * *"
   workflow_dispatch:
     inputs:
       account:
@@ -57,37 +55,28 @@ on:
 
 jobs:
   generate-account-and-key:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.os || 'windows-latest' }} #if fallback then
+    runs-on: ${{ github.event.inputs.os || 'windows-latest' }}
+
     steps:
       - name: Set Variables
         id: vars
-        shell: bash 
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "account=${{ github.event.inputs.account }}" >> $GITHUB_OUTPUT
-            echo "key=${{ github.event.inputs.key }}" >> $GITHUB_OUTPUT
-            echo "mail=${{ github.event.inputs.mail }}" >> $GITHUB_OUTPUT
-            echo "key_type=${{ github.event.inputs.key_type }}" >> $GITHUB_OUTPUT
-            echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
-          else #if fallback then
-            echo "account=0" >> $GITHUB_OUTPUT
-            echo "key=1" >> $GITHUB_OUTPUT
-            echo "mail=emailfake" >> $GITHUB_OUTPUT
-            echo "key_type=--key" >> $GITHUB_OUTPUT
-            echo "branch=main" >> $GITHUB_OUTPUT
-          fi
+          echo "account=${{ github.event.inputs.account || '0' }}" >> $GITHUB_OUTPUT
+          echo "key=${{ github.event.inputs.key || '1' }}" >> $GITHUB_OUTPUT
+          echo "mail=${{ github.event.inputs.mail || 'emailfake' }}" >> $GITHUB_OUTPUT
+          echo "key_type=${{ github.event.inputs.key_type || '--key' }}" >> $GITHUB_OUTPUT
+          echo "branch=${{ github.event.inputs.branch || 'main' }}" >> $GITHUB_OUTPUT
 
       - name: Checkout Repository
         uses: actions/checkout@v5
-
-      - name: Clone Repository
-        run: git clone -b "${{ steps.vars.outputs.branch }}" github.com/marcelobarber93/ESET-KeyGenhhh.git
+        with:
+          ref: ${{ steps.vars.outputs.branch }}
 
       - name: Setup & Run Script (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          cd ESET-KeyGen
+          cd $GITHUB_WORKSPACE
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             brew install python@3.11 || true
           else
@@ -120,7 +109,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cd ESET-KeyGen
+          cd $env:GITHUB_WORKSPACE
           python -m venv venv
           .\venv\Scripts\pip install -r requirements.txt
           .\venv\Scripts\Activate.ps1
